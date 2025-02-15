@@ -18,10 +18,22 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer fakerId;
+    private Long fakerId;
     private String name;
     private String email;
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
+    private User(Long fakerId, String name, String email, UserStatus status) {
+        this.fakerId = fakerId;
+        this.name = name;
+        this.email = email;
+        this.status = status;
+    }
+
+    // ✅ 팩토리 메서드 추가
+    public static User create(Long fakerId, String name, String email, UserStatus status) {
+        return new User(fakerId, name, email, status);
+    }
 }

@@ -6,7 +6,7 @@ import prography.pingpong_game.user.entity.UserStatus;
 
 public record UserResponse(
         Long id,
-        Integer fakerId,
+        Long fakerId,
         String name,
         String email,
         UserStatus status,
