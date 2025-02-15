@@ -1,4 +1,4 @@
-package prography.pingpong_game.room;
+package prography.pingpong_game.room.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

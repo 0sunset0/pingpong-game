@@ -19,6 +19,8 @@ import java.util.Locale;
 public class InitializationService {
     private final FakerApiClient fakerApiClient;
     private final UserRepository userRepository;
+
+    //TODO yml에서 받아서 쓸지 고민
     private static final int activeUserMaxFakerId = 30;
     private static final int waitUserMaxFakerId = 60;
 
