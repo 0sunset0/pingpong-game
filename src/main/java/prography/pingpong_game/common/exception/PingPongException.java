@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class PingPongException extends RuntimeException {
-    private final ErrorStatus errorStatus;
-    public PingPongException(ErrorStatus errorStatus) {
-        this.errorStatus = errorStatus;
+    private final ApiStatus apiStatus;
+    public PingPongException(ApiStatus apiStatus) {
+        this.apiStatus = apiStatus;
     }
 }

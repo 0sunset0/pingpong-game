@@ -11,19 +11,19 @@ import prography.pingpong_game.common.ApiResponse;
 public class GlobalExceptionHandler {
     @ExceptionHandler(PingPongException.class)
     public ApiResponse handlePingPongException(PingPongException e) {
-        log.warn("{}({}) - {}", e.getClass().getSimpleName(), e.getErrorStatus().getHttpStatus(), e.getErrorStatus().getMessage());
-        return ApiResponse.error(e.getErrorStatus());
+        log.warn("{}({}) - {}", e.getClass().getSimpleName(), e.getApiStatus().getHttpStatus(), e.getApiStatus().getMessage());
+        return ApiResponse.error(e.getApiStatus());
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ApiResponse handleRuntimeException(RuntimeException e) {
         log.warn("{}({}) - {}", e.getClass().getSimpleName(), HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        return ApiResponse.error(ErrorStatus.SERVER_ERROR);
+        return ApiResponse.error(ApiStatus.SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)
     public ApiResponse handleException(Exception e) {
         log.warn("{}({}) - {}", e.getClass().getSimpleName(), HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        return ApiResponse.error(ErrorStatus.SERVER_ERROR);
+        return ApiResponse.error(ApiStatus.SERVER_ERROR);
     }
 }
