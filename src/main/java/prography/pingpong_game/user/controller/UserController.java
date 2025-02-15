@@ -16,9 +16,8 @@ import prography.pingpong_game.user.service.UserService;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
-    @GetMapping
     @Operation(summary = "유저 전체 조회 API", description = "모든 회원 정보를 응답합니다.")
+    @GetMapping
     public ApiResponse<UserPageResponse> findAllUsers(
             @RequestParam(defaultValue = "10") @Parameter(description = "페이지 크기") int size,
             @RequestParam(defaultValue = "0") @Parameter(description = "페이지 번호 (0부터 시작)") int page
