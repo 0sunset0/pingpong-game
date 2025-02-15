@@ -1,4 +1,4 @@
-package prography.pingpong_game;
+package prography.pingpong_game.common;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum ResponseConstants {
+public enum ErrorStatus {
     SUCCESS(HttpStatus.OK, "API 요청이 성공했습니다."),
     BAD_REQUEST(HttpStatus.CREATED, "불가능한 요청입니다."),
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "에러가 발생했습니다.");
