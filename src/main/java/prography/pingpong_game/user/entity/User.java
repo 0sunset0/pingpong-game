@@ -2,6 +2,7 @@ package prography.pingpong_game.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import prography.pingpong_game.BaseEntity;
@@ -11,6 +12,7 @@ import prography.pingpong_game.BaseEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "users")
+@AllArgsConstructor
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,5 +23,5 @@ public class User extends BaseEntity {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    private UserStatus status; // WAIT, ACTIVE, NON_ACTIVE
+    private UserStatus status;
 }

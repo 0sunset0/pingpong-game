@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class PingpongGameApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(PingpongGameApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(PingpongGameApplication.class, args);
+    }
 
 }
