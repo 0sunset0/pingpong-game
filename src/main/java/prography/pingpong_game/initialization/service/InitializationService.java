@@ -10,6 +10,7 @@ import prography.pingpong_game.user.entity.User;
 import prography.pingpong_game.user.entity.UserStatus;
 import prography.pingpong_game.user.repository.UserRepository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -18,20 +19,22 @@ import java.util.Locale;
 public class InitializationService {
     private final FakerApiClient fakerApiClient;
     private final UserRepository userRepository;
+    private static final int activeUserMaxFakerId = 30;
+    private static final int waitUserMaxFakerId = 60;
 
     @Transactional
     public void initialize(int seed, int quantity) {
-        //TODO: 기존에 있던 모든 회원 정보 및 방 정보를 삭제
-
+        //TODO: 기존에 있던 모든 회원 정보 및 방 정보를 삭제(방 정보 삭제 해야 함)
+        userRepository.deleteAll();
         FakerApiResponse fakerApiResponse = fakerApiClient.fetchUsers(seed, quantity, Locale.KOREA);
         List<User> users = fakerApiResponse.data().stream()
-                .map(this::convertToUserEntity)
-                .sorted((u1, u2) -> u1.getFakerId().compareTo(u2.getFakerId()))
+                .map(this::convertToUser)
+                .sorted(Comparator.comparing(User::getFakerId))
                 .toList();
         userRepository.saveAll(users);
     }
 
-    private User convertToUserEntity(FakerUserData fakerUserData) {
+    private User convertToUser(FakerUserData fakerUserData) {
         return User.create(
                 fakerUserData.id(),
                 fakerUserData.username(),
@@ -39,15 +42,7 @@ public class InitializationService {
                 determineUserStatus(fakerUserData.id())
         );
     }
-
-    //TODO : 이 부분을 추상화할 수는 없을까
     private UserStatus determineUserStatus(Long fakerId) {
-        if (fakerId <= 30) {
-            return UserStatus.ACTIVE;
-        } else if (fakerId <= 60) {
-            return UserStatus.WAIT;
-        } else {
-            return UserStatus.NON_ACTIVE;
-        }
+        return UserStatus.fromFakerId(fakerId, activeUserMaxFakerId, waitUserMaxFakerId);
     }
 }
