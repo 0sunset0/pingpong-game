@@ -2,10 +2,11 @@ package prography.pingpong_game.common;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
+import prography.pingpong_game.common.exception.ErrorStatus;
 
 import java.util.Optional;
 
-import static prography.pingpong_game.common.ErrorStatus.SUCCESS;
+import static prography.pingpong_game.common.exception.ErrorStatus.SUCCESS;
 
 public record ApiResponse<T>(
         @Schema(description = "응답 코드", example = "200") Integer code,

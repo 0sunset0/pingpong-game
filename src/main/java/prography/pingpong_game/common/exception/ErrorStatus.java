@@ -1,4 +1,4 @@
-package prography.pingpong_game.common;
+package prography.pingpong_game.common.exception;
 
 import lombok.AccessLevel;
 import lombok.Getter;

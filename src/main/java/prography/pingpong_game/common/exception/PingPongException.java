@@ -1,7 +1,6 @@
-package prography.pingpong_game.common;
+package prography.pingpong_game.common.exception;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public class PingPongException extends RuntimeException {
