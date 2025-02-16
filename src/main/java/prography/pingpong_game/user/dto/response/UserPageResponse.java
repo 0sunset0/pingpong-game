@@ -11,14 +11,15 @@ public record UserPageResponse<T>(
         long totalElements,
         @Schema(description = "전체 페이지 개수", example = "10")
         int totalPages,
-        List<UserResponse> userList) {
+        List<UserSummaryResponse> userList
+) {
 
     public static UserPageResponse from(Page<User> userPage) {
         return new UserPageResponse(
                 userPage.getTotalElements(),
                 userPage.getTotalPages(),
                 userPage.getContent().stream()
-                        .map(UserResponse::from)
+                        .map(UserSummaryResponse::from)
                         .toList()
         );
     }
