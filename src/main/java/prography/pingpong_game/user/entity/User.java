@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import prography.pingpong_game.BaseEntity;
+import prography.pingpong_game.common.exception.ApiStatus;
+import prography.pingpong_game.user.exception.UserNotActiveException;
 
 
 @Getter
@@ -35,5 +37,15 @@ public class User extends BaseEntity {
     // ✅ 팩토리 메서드 추가
     public static User create(Long fakerId, String name, String email, UserStatus status) {
         return new User(fakerId, name, email, status);
+    }
+
+    private boolean isActive() {
+        return this.status == UserStatus.ACTIVE;
+    }
+
+    public void validateActive() {
+        if (!isActive()) {
+            throw new UserNotActiveException(ApiStatus.BAD_REQUEST);
+        }
     }
 }
