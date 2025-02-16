@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import prography.pingpong_game.common.exception.ApiStatus;
 import prography.pingpong_game.room.dto.response.RoomDetailResponse;
 import prography.pingpong_game.room.dto.request.RoomCreateRequest;
+import prography.pingpong_game.room.dto.response.RoomPageResponse;
 import prography.pingpong_game.room.entity.Room;
 import prography.pingpong_game.room.entity.RoomType;
 import prography.pingpong_game.room.exception.RoomNotFoundException;
@@ -53,5 +54,9 @@ public class RoomService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new RoomNotFoundException(ApiStatus.BAD_REQUEST));
         return RoomDetailResponse.from(room);
+    }
+
+    public RoomPageResponse findAllRooms(int size, int page) {
+        return null;
     }
 }

@@ -5,7 +5,7 @@ import prography.pingpong_game.common.utils.DateTimeUtils;
 import prography.pingpong_game.user.entity.User;
 import prography.pingpong_game.user.entity.UserStatus;
 @Schema(description = "사용자 응답 DTO")
-public record UserResponse(
+public record UserSummaryResponse(
         @Schema(description = "사용자 ID", example = "1")
         Long id,
         @Schema(description = "가짜 ID", example = "1001")
@@ -20,8 +20,8 @@ public record UserResponse(
         String createdAt,
         @Schema(description = "사용자 정보 업데이트 시간 (yyyy-MM-dd HH:mm:ss)", example = "2024-02-15 12:00:00")
         String updatedAt) {
-    public static UserResponse from(User user) {
-        return new UserResponse(
+    public static UserSummaryResponse from(User user) {
+        return new UserSummaryResponse(
                 user.getId(),
                 user.getFakerId(),
                 user.getName(),
