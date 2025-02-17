@@ -1,6 +1,8 @@
 package prography.pingpong_game.room.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import prography.pingpong_game.common.exception.ApiStatus;
@@ -43,8 +45,9 @@ public class RoomService {
     }
 
     private void validateUserNotInRoom(Long userId) {
-        boolean hasExistingRoom = userRoomRepository.existsByUserId(userId);
-        if (hasExistingRoom){
+        //TODO : actice한 유저룸을 찾아와야 함
+        boolean hasExistingRoom = userRoomRepository.existsActiveRoomByUserId(userId);
+        if (hasExistingRoom) {
             new UserAlreadyInRoomException(ApiStatus.BAD_REQUEST);
         }
     }
@@ -55,8 +58,10 @@ public class RoomService {
                 .orElseThrow(() -> new RoomNotFoundException(ApiStatus.BAD_REQUEST));
         return RoomDetailResponse.from(room);
     }
-
+    @Transactional
     public RoomPageResponse findAllRooms(int size, int page) {
-        return null;
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<Room> roomPage = roomRepository.findAllRooms(pageable);
+        return RoomPageResponse.from(roomPage);
     }
 }
