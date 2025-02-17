@@ -5,6 +5,5 @@ import org.springframework.stereotype.Repository;
 import prography.pingpong_game.room.entity.UserRoom;
 
 @Repository
-public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
-    boolean existsByUserId(Long userId);
+public interface UserRoomRepository extends JpaRepository<UserRoom, Long>, UserRoomRepositoryCustom {
 }

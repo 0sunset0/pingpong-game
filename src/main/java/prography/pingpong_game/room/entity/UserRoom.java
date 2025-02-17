@@ -25,4 +25,7 @@ public class UserRoom {
 
     @Enumerated(EnumType.STRING)
     private Team team;
+
+    @Enumerated(EnumType.STRING)
+    private UserRoomStatus status;
 }
