@@ -1,4 +1,4 @@
-package prography.pingpong_game.room;
+package prography.pingpong_game.room.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -13,7 +13,7 @@ import prography.pingpong_game.user.entity.User;
 public class Room extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String title;
 
@@ -26,4 +26,14 @@ public class Room extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private RoomStatus status;
+    private Room(String title, User host, RoomType roomType, RoomStatus status) {
+        this.title = title;
+        this.host = host;
+        this.roomType = roomType;
+        this.status = status;
+    }
+
+    public static Room create(String title, User host, RoomType roomType) {
+        return new Room(title, host, roomType, RoomStatus.WAIT);
+    }
 }

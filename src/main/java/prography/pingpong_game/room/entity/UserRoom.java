@@ -1,4 +1,4 @@
-package prography.pingpong_game.room;
+package prography.pingpong_game.room.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -25,4 +25,7 @@ public class UserRoom {
 
     @Enumerated(EnumType.STRING)
     private Team team;
+
+    @Enumerated(EnumType.STRING)
+    private UserRoomStatus status;
 }
