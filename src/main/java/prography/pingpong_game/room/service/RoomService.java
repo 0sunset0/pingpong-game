@@ -45,7 +45,6 @@ public class RoomService {
     }
 
     private void validateUserNotInRoom(Long userId) {
-        //TODO : actice한 유저룸을 찾아와야 함
         boolean hasExistingRoom = userRoomRepository.existsActiveRoomByUserId(userId);
         if (hasExistingRoom) {
             new UserAlreadyInRoomException(ApiStatus.BAD_REQUEST);
