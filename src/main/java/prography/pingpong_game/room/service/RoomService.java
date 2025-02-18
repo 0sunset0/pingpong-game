@@ -95,12 +95,12 @@ public class RoomService {
         validateUserNotInRoom(userId);
 
         //참가 팀 결정 (레드가 비었으면 레드 먼저)
-        Team team = room.getRoomCapacity().assignTeam();
+        Team team = room.assignTeam();
 
         //유저룸 생성 후 저장 -> 유저가 생성되면,, 룸 정원이 올라가야 함
         UserRoom userRoom = UserRoom.create(room, user, team);
         userRoomRepository.save(userRoom);
-        room.getRoomCapacity().addUserToTeam(team);
+        room.addUser(team);
     }
 
     private static void validateRoomNotFull(Room room) {

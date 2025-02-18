@@ -50,4 +50,12 @@ public class Room extends BaseEntity {
     public boolean isFull() {
         return roomCapacity.isFull();
     }
+
+    public Team assignTeam() {
+        return roomCapacity.assignTeam();
+    }
+
+    public void addUser(Team team) {
+        roomCapacity.addUserToTeam(team);
+    }
 }

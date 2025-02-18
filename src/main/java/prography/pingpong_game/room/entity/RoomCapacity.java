@@ -25,14 +25,14 @@ public class RoomCapacity {
 		return new RoomCapacity(maxCapacity);
 	}
 
-	public Team assignTeam() {
+	Team assignTeam() {
 		if (redTeamCapacity == 0) {
 			return Team.RED;
 		}
 		return (redTeamCapacity < maxCapacity / 2) ? Team.RED : Team.BLUE;
 	}
 
-	public void addUserToTeam(Team team) {
+	void addUserToTeam(Team team) {
 		if (team == Team.RED) {
 			redTeamCapacity++;
 		} else {
