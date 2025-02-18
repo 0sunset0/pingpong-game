@@ -34,8 +34,9 @@ public class RoomService {
         User user = findUser(userId);
         validateUserActive(user);
         validateUserNotInRoom(userId);
-        createNewRoom(roomCreateRequest, user);
-        //TODO : 방 생성 후 호스트를 방에 참여시켜야 함.
+        Long roomId = createNewRoom(roomCreateRequest, user);
+        Room room = findRoom(roomId);
+        addUserToRoom(room, user);
     }
 
     private User findUser(Long userId) {
@@ -48,15 +49,17 @@ public class RoomService {
         user.validateActive();
     }
 
-    private void createNewRoom(RoomCreateRequest roomCreateRequest, User user) {
+    private Long createNewRoom(RoomCreateRequest roomCreateRequest, User user) {
         RoomType roomType = RoomType.fromString(roomCreateRequest.roomType());
-        roomRepository.save(Room.create(roomCreateRequest.title(), user, roomType));
+        Room room = roomRepository.save(Room.create(roomCreateRequest.title(), user, roomType));
+        return room.getId();
     }
 
     private void validateUserNotInRoom(Long userId) {
+        System.out.println("userId = " + userId);
         boolean hasExistingRoom = userRoomRepository.existsActiveRoomByUserId(userId);
         if (hasExistingRoom) {
-            new UserAlreadyInRoomException(ApiStatus.BAD_REQUEST);
+            throw new UserAlreadyInRoomException(ApiStatus.BAD_REQUEST);
         }
     }
 
@@ -78,6 +81,7 @@ public class RoomService {
         Page<Room> roomPage = roomRepository.findAllRooms(pageable);
         return RoomPageResponse.from(roomPage);
     }
+
     @Transactional
     public void attentionRoom(Long roomId, AttendRequest attendRequest) {
         Room room = findRoom(roomId);
@@ -87,10 +91,10 @@ public class RoomService {
         validateUserActive(user);
         validateUserNotInRoom(attendRequest.userId());
 
-        attendUserInRoom(room, user);
+        addUserToRoom(room, user);
     }
 
-    private void attendUserInRoom(Room room, User user) {
+    private void addUserToRoom(Room room, User user) {
         Team team = room.assignTeam();
         UserRoom userRoom = UserRoom.create(room, user, team);
         userRoomRepository.save(userRoom);

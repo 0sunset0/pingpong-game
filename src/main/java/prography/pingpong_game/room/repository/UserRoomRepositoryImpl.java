@@ -21,7 +21,6 @@ public class UserRoomRepositoryImpl implements UserRoomRepositoryCustom{
 						userRoom.status.eq(UserRoomStatus.ACTIVE)
 				)
 				.fetchFirst();
-
 		return fetchOne != null;
 	}
 }
