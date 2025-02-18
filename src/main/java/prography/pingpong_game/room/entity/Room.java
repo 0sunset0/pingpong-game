@@ -26,14 +26,28 @@ public class Room extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private RoomStatus status;
-    private Room(String title, User host, RoomType roomType, RoomStatus status) {
+
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_capacity_id")
+    private RoomCapacity roomCapacity;
+
+    private Room(String title, User host, RoomType roomType, RoomStatus status, RoomCapacity roomCapacity) {
         this.title = title;
         this.host = host;
         this.roomType = roomType;
         this.status = status;
+        this.roomCapacity = roomCapacity;
     }
 
     public static Room create(String title, User host, RoomType roomType) {
-        return new Room(title, host, roomType, RoomStatus.WAIT);
+        RoomCapacity roomCapacity = RoomCapacity.create(roomType.getMaxCapacity());
+        return new Room(title, host, roomType, RoomStatus.WAIT, roomCapacity);
+    }
+
+    public boolean isWaiting() {
+        return this.status == RoomStatus.WAIT;
+    }
+    public boolean isFull() {
+        return roomCapacity.isFull();
     }
 }

@@ -28,4 +28,19 @@ public class UserRoom {
 
     @Enumerated(EnumType.STRING)
     private UserRoomStatus status;
+
+    public static UserRoom create(Room room, User user, Team team) {
+        return new UserRoom(room, user, team, UserRoomStatus.ACTIVE);
+    }
+
+    private UserRoom(Room room, User user, Team team, UserRoomStatus status) {
+        this.room = room;
+        this.user = user;
+        this.team = team;
+        this.status = status;
+    }
+
+    public void changeTeam() {
+        this.team = (this.team == Team.RED) ? Team.BLUE : Team.RED;
+    }
 }

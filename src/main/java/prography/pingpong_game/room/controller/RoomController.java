@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import prography.pingpong_game.common.ApiResponse;
+import prography.pingpong_game.room.dto.request.AttendRequest;
+import prography.pingpong_game.room.dto.request.OutRoomRequest;
 import prography.pingpong_game.room.dto.request.RoomCreateRequest;
 import prography.pingpong_game.room.service.RoomService;
 
@@ -33,5 +35,25 @@ public class RoomController {
             @Parameter(description = "조회할 방 ID", example = "1")
             @PathVariable Long roomId) {
         return ApiResponse.success(roomService.findRoomDetail(roomId));
+    }
+
+    @Operation(summary = "방 참가 API", description = "대기 중인 방에 참가합니다. ")
+    @PostMapping("/attention/{roomId}")
+    public ApiResponse attentionRoom(
+            @Parameter(description = "참가할 방 ID", example = "1")
+            @PathVariable Long roomId,
+            @RequestBody AttendRequest attendRequest) {
+        roomService.attentionRoom(roomId, attendRequest);
+        return ApiResponse.success();
+    }
+
+    @Operation(summary = "방 나가기 API", description = "참여 중인 방에서 나갑니다. ")
+    @PostMapping("/out/{roomId}")
+    public ApiResponse outRoom(
+            @Parameter(description = "나갈 방 ID", example = "1")
+            @PathVariable Long roomId,
+            @RequestBody OutRoomRequest outRoomRequest) {
+        ApiResponse.success(roomService.outRoom(roomId, outRoomRequest));
+        return ApiResponse.success();
     }
 }
