@@ -80,24 +80,18 @@ public class RoomService {
     }
     @Transactional
     public void attentionRoom(Long roomId, AttendRequest attendRequest) {
-        //방이 대기 상태인지 확인
         Room room = findRoom(roomId);
+        User user = findUser(attendRequest.userId());
         validateRoomWaiting(room);
-        //참여하고자 하는 방이 정원 미달인지 확인
         validateRoomNotFull(room);
-
-        //유저 활성 상태인지 확인
-        Long userId = attendRequest.userId();
-        User user = findUser(userId);
         validateUserActive(user);
+        validateUserNotInRoom(attendRequest.userId());
 
-        //유저가 현재 참여한 방이 있는지 확인
-        validateUserNotInRoom(userId);
+        attendUserInRoom(room, user);
+    }
 
-        //참가 팀 결정 (레드가 비었으면 레드 먼저)
+    private void attendUserInRoom(Room room, User user) {
         Team team = room.assignTeam();
-
-        //유저룸 생성 후 저장 -> 유저가 생성되면,, 룸 정원이 올라가야 함
         UserRoom userRoom = UserRoom.create(room, user, team);
         userRoomRepository.save(userRoom);
         room.addUser(team);
