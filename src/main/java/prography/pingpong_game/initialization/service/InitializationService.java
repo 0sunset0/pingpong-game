@@ -28,12 +28,14 @@ public class InitializationService {
     public void initialize(int seed, int quantity) {
         //TODO: 기존에 있던 모든 회원 정보 및 방 정보를 삭제(방 정보 삭제 해야 함)
         userRepository.deleteAll();
-        FakerApiResponse fakerApiResponse = fakerApiClient.fetchUsers(seed, quantity, Locale.KOREA);
-        List<User> users = fakerApiResponse.data().stream()
-                .map(this::convertToUser)
-                .sorted(Comparator.comparing(User::getFakerId))
-                .toList();
-        userRepository.saveAll(users);
+        fakerApiClient.fetchUsers(seed, quantity, Locale.KOREA)
+                .subscribe(fakerApiResponse -> {
+                    List<User> users = fakerApiResponse.data().stream()
+                            .map(this::convertToUser)
+                            .sorted(Comparator.comparing(User::getFakerId))
+                            .toList();
+                    userRepository.saveAll(users);
+                });
     }
 
     private User convertToUser(FakerUserData fakerUserData) {
