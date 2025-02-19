@@ -53,7 +53,7 @@ public class RoomController {
             @Parameter(description = "나갈 방 ID", example = "1")
             @PathVariable Long roomId,
             @RequestBody OutRoomRequest outRoomRequest) {
-        ApiResponse.success(roomService.outRoom(roomId, outRoomRequest));
+        roomService.outRoom(roomId, outRoomRequest);
         return ApiResponse.success();
     }
 }

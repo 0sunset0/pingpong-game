@@ -58,4 +58,16 @@ public class Room extends BaseEntity {
     public void addUser(Team team) {
         roomCapacity.addUserToTeam(team);
     }
+
+    public void finish() {
+        this.status = RoomStatus.FINISH;
+    }
+
+    public boolean isHost(Long userId) {
+        return this.host.getId().equals(userId);
+    }
+
+    public boolean isExitNotAllowed() {
+        return this.status == RoomStatus.PROGRESS || this.status == RoomStatus.FINISH;
+    }
 }

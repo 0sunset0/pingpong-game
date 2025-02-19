@@ -29,7 +29,7 @@ public class RoomService {
     public void createRoom(RoomCreateRequest roomCreateRequest) {
         Long userId = roomCreateRequest.userId();
         User user = userService.getActiveUser(userId);
-        roomValidator.validateUserNotInRoom(userId);
+        roomValidator.validateUserNotInAnyRoom(userId);
         Long roomId = createNewRoom(roomCreateRequest, user);
         Room room = findRoom(roomId);
         addUserToRoom(room, user);
@@ -41,7 +41,7 @@ public class RoomService {
         return room.getId();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public RoomDetailResponse findRoomDetail(Long roomId) {
         Room room = findRoom(roomId);
         return RoomDetailResponse.from(room);
@@ -53,7 +53,7 @@ public class RoomService {
         return room;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public RoomPageResponse findAllRooms(int size, int page) {
         PageRequest pageable = PageRequest.of(page, size);
         Page<Room> roomPage = roomRepository.findAllRooms(pageable);
@@ -66,7 +66,7 @@ public class RoomService {
         User user = userService.getActiveUser(attendRequest.userId());
         roomValidator.validateRoomWaiting(room);
         roomValidator.validateRoomNotFull(room);
-        roomValidator.validateUserNotInRoom(attendRequest.userId());
+        roomValidator.validateUserNotInAnyRoom(attendRequest.userId());
 
         addUserToRoom(room, user);
     }
@@ -78,7 +78,20 @@ public class RoomService {
         room.addUser(team);
     }
 
-    public Object outRoom(Long roomId, OutRoomRequest outRoomRequest) {
-        return null;
+    @Transactional
+    public void outRoom(Long roomId, OutRoomRequest outRoomRequest) {
+        //존재하지 않는 방인지
+        Room room = findRoom(roomId);
+
+        //유저가 해당 방에 참가한 상태인지
+        roomValidator.validateUserInRoom(outRoomRequest.userId(), roomId);
+
+        //이미 시작하거나 끝난 방에는 나가기 불가
+        roomValidator.validateRoomCanExit(room);
+
+        //TODO : 나가기 처리 - 호스트라면 모든 사람들도 방을 나가게 된다
+        //TODO : 방 나가면 userRoom hard delete
+        //TODO : 방에서 유저 제거
+        userRoomRepository.deleteUserRoom(outRoomRequest.userId(), roomId);
     }
 }

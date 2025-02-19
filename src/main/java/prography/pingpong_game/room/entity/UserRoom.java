@@ -26,18 +26,14 @@ public class UserRoom {
     @Enumerated(EnumType.STRING)
     private Team team;
 
-    @Enumerated(EnumType.STRING)
-    private UserRoomStatus status;
-
     public static UserRoom create(Room room, User user, Team team) {
-        return new UserRoom(room, user, team, UserRoomStatus.ACTIVE);
+        return new UserRoom(room, user, team);
     }
 
-    private UserRoom(Room room, User user, Team team, UserRoomStatus status) {
+    private UserRoom(Room room, User user, Team team) {
         this.room = room;
         this.user = user;
         this.team = team;
-        this.status = status;
     }
 
     public void changeTeam() {
