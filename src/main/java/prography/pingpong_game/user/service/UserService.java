@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import prography.pingpong_game.common.exception.ApiStatus;
 import prography.pingpong_game.user.dto.response.UserPageResponse;
 import prography.pingpong_game.user.entity.User;
+import prography.pingpong_game.user.exception.UserNotActiveException;
 import prography.pingpong_game.user.exception.UserNotFoundException;
 import prography.pingpong_game.user.repository.UserRepository;
 
@@ -26,7 +27,9 @@ public class UserService {
     public User getActiveUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ApiStatus.BAD_REQUEST));
-        user.validateActive();
+        if (!user.isActive()) {
+            throw new UserNotActiveException(ApiStatus.BAD_REQUEST);
+        }
         return user;
     }
 }

@@ -20,7 +20,7 @@ public class RoomValidator {
 		}
 	}
 
-	void validateRoomCanExit(Room room) {
+	void validateCanExitRoom(Room room) {
 		if (room.isExitNotAllowed()) {
 			throw new RoomNotExitException(ApiStatus.BAD_REQUEST);
 		}

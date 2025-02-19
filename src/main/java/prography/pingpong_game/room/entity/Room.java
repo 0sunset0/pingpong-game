@@ -55,12 +55,17 @@ public class Room extends BaseEntity {
         return roomCapacity.assignTeam();
     }
 
-    public void addUser(Team team) {
-        roomCapacity.addUserToTeam(team);
+    public void addUser(UserRoom userRoom) {
+        roomCapacity.addUserToTeam(userRoom.getTeam());
+    }
+
+    public void removeUser(UserRoom userRoom) {
+        roomCapacity.removeUserFromTeam(userRoom.getTeam());
     }
 
     public void finish() {
         this.status = RoomStatus.FINISH;
+        roomCapacity.removeAllUsers();
     }
 
     public boolean isHost(Long userId) {

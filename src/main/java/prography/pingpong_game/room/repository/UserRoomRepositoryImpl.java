@@ -38,12 +38,9 @@ public class UserRoomRepositoryImpl implements UserRoomRepositoryCustom{
 	}
 
 	@Override
-	public void deleteUserRoom(Long userId, Long roomId) {
+	public void deleteAllByRoomId(Long roomId) {
 		queryFactory.delete(userRoom)
-				.where(
-						userRoom.user.id.eq(userId),
-						userRoom.room.id.eq(roomId)
-				)
+				.where(userRoom.room.id.eq(roomId))
 				.execute();
 	}
 }

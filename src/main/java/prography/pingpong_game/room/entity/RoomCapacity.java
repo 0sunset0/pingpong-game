@@ -54,4 +54,10 @@ public class RoomCapacity {
 	boolean isFull() {
 		return this.currentCapacity >= this.maxCapacity;
 	}
+
+	public void removeAllUsers() {
+		this.currentCapacity = 0;
+		this.redTeamCapacity = 0;
+		this.blueTeamCapacity = 0;
+	}
 }

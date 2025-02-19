@@ -13,10 +13,12 @@ import prography.pingpong_game.room.dto.request.RoomCreateRequest;
 import prography.pingpong_game.room.dto.response.RoomPageResponse;
 import prography.pingpong_game.room.entity.*;
 import prography.pingpong_game.room.exception.RoomNotFoundException;
+import prography.pingpong_game.room.exception.UserNotInRoomException;
 import prography.pingpong_game.room.repository.RoomRepository;
 import prography.pingpong_game.room.repository.UserRoomRepository;
 import prography.pingpong_game.user.entity.User;
 import prography.pingpong_game.user.service.UserService;
+
 
 @Service
 @RequiredArgsConstructor
@@ -75,23 +77,36 @@ public class RoomService {
         Team team = room.assignTeam();
         UserRoom userRoom = UserRoom.create(room, user, team);
         userRoomRepository.save(userRoom);
-        room.addUser(team);
+        room.addUser(userRoom);
     }
 
     @Transactional
     public void outRoom(Long roomId, OutRoomRequest outRoomRequest) {
-        //존재하지 않는 방인지
+        Long userId = outRoomRequest.userId();
         Room room = findRoom(roomId);
+        UserRoom userRoom = findUserRoom(roomId, userId);
+        roomValidator.validateCanExitRoom(room);
 
-        //유저가 해당 방에 참가한 상태인지
-        roomValidator.validateUserInRoom(outRoomRequest.userId(), roomId);
+        if (room.isHost(userId)) {
+            handleHostExit(roomId, room);
+        } else {
+            handleUserExit(userRoom, room);
+        }
+    }
 
-        //이미 시작하거나 끝난 방에는 나가기 불가
-        roomValidator.validateRoomCanExit(room);
+    private void handleHostExit(Long roomId, Room room) {
+        userRoomRepository.deleteAllByRoomId(roomId);
+        room.finish();
+    }
 
-        //TODO : 나가기 처리 - 호스트라면 모든 사람들도 방을 나가게 된다
-        //TODO : 방 나가면 userRoom hard delete
-        //TODO : 방에서 유저 제거
-        userRoomRepository.deleteUserRoom(outRoomRequest.userId(), roomId);
+    private void handleUserExit(UserRoom userRoom, Room room) {
+        userRoomRepository.delete(userRoom);
+        room.removeUser(userRoom);
+    }
+
+    private UserRoom findUserRoom(Long roomId, Long userId) {
+        UserRoom userRoom = userRoomRepository.findUserRoom(userId, roomId)
+                .orElseThrow(() -> new UserNotInRoomException(ApiStatus.BAD_REQUEST));
+        return userRoom;
     }
 }

@@ -9,5 +9,5 @@ public interface UserRoomRepositoryCustom {
 
 	Optional<UserRoom> findUserRoom(Long userId, Long roomId);
 
-	void deleteUserRoom(Long userId, Long roomId);
+	void deleteAllByRoomId(Long roomId);
 }
