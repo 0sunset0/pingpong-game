@@ -8,6 +8,7 @@ import prography.pingpong_game.common.ApiResponse;
 import prography.pingpong_game.room.dto.request.AttendRequest;
 import prography.pingpong_game.room.dto.request.OutRoomRequest;
 import prography.pingpong_game.room.dto.request.RoomCreateRequest;
+import prography.pingpong_game.room.dto.request.StartGameRequest;
 import prography.pingpong_game.room.service.RoomService;
 
 @RequiredArgsConstructor
@@ -54,6 +55,16 @@ public class RoomController {
             @PathVariable Long roomId,
             @RequestBody OutRoomRequest outRoomRequest) {
         roomService.outRoom(roomId, outRoomRequest);
+        return ApiResponse.success();
+    }
+
+    @Operation(summary = "게임 시작 API", description = "게임을 시작합니다. ")
+    @PutMapping("/start/{roomId}")
+    public ApiResponse startGame(
+            @Parameter(description = "참여하고 있는 방 ID", example = "1")
+            @PathVariable Long roomId,
+            @RequestBody StartGameRequest startGameRequest) {
+        roomService.startGame(roomId, startGameRequest);
         return ApiResponse.success();
     }
 }

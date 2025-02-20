@@ -48,7 +48,7 @@ public class Room extends BaseEntity {
         return this.status == RoomStatus.WAIT;
     }
     public boolean isFull() {
-        return roomCapacity.isFull();
+        return this.roomCapacity.isFull();
     }
 
     public Team assignTeam() {
@@ -63,7 +63,11 @@ public class Room extends BaseEntity {
         roomCapacity.removeUserFromTeam(userRoom.getTeam());
     }
 
-    public void finish() {
+    public void startGame() {
+        this.status = RoomStatus.PROGRESS;
+    }
+
+    public void finishGame() {
         this.status = RoomStatus.FINISH;
         roomCapacity.removeAllUsers();
     }

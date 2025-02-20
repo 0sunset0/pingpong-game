@@ -1,16 +1,16 @@
 package prography.pingpong_game.room.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import prography.pingpong_game.common.exception.ApiStatus;
-import prography.pingpong_game.room.dto.request.AttendRequest;
-import prography.pingpong_game.room.dto.request.OutRoomRequest;
-import prography.pingpong_game.room.dto.request.TeamSwitchRequest;
+import prography.pingpong_game.room.dto.request.*;
 import prography.pingpong_game.room.dto.response.RoomDetailResponse;
-import prography.pingpong_game.room.dto.request.RoomCreateRequest;
 import prography.pingpong_game.room.dto.response.RoomPageResponse;
 import prography.pingpong_game.room.entity.*;
 import prography.pingpong_game.room.exception.RoomNotFoundException;
@@ -18,15 +18,21 @@ import prography.pingpong_game.room.repository.RoomRepository;
 import prography.pingpong_game.user.entity.User;
 import prography.pingpong_game.user.service.UserService;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RoomService {
     private final RoomRepository roomRepository;
     private final UserService userService;
     private final RoomValidator roomValidator;
     private final UserRoomValidator userRoomValidator;
     private final UserRoomService userRoomService;
+    private final ApplicationEventPublisher eventPublisher;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1); // ✅ 스레드 풀 관리
     @Transactional
     public void createRoom(RoomCreateRequest roomCreateRequest) {
         Long userId = roomCreateRequest.userId();
@@ -51,6 +57,13 @@ public class RoomService {
 
     private Room findRoom(Long roomId) {
         Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new RoomNotFoundException(ApiStatus.BAD_REQUEST));
+        return room;
+    }
+
+    @Transactional(readOnly = true)
+    public Room findRoomWithCapacity(Long roomId) {
+        Room room = roomRepository.findRoomWithCapacity(roomId)
                 .orElseThrow(() -> new RoomNotFoundException(ApiStatus.BAD_REQUEST));
         return room;
     }
@@ -86,18 +99,18 @@ public class RoomService {
         roomValidator.validateCanExitRoom(room);
 
         if (room.isHost(userId)) {
-            handleHostExit(room);
+            handleExitAllUsers(room);
         } else {
-            handleUserExit(userRoom, room);
+            handleExitUser(userRoom, room);
         }
     }
 
-    private void handleHostExit(Room room) {
+    private void handleExitAllUsers(Room room) {
         userRoomService.deleteAllUserRooms(room.getId());
-        room.finish();
+        room.finishGame();
     }
 
-    private void handleUserExit(UserRoom userRoom, Room room) {
+    private void handleExitUser(UserRoom userRoom, Room room) {
         userRoomService.deleteUser(userRoom);
         room.removeUser(userRoom);
     }
@@ -116,5 +129,22 @@ public class RoomService {
         Team newTeam = currentTeam.getOpposite();
         room.changeUserTeam(currentTeam, newTeam);
         userRoom.switchTeam();
+    }
+
+    @Transactional
+    public void startGame(Long roomId, StartGameRequest startGameRequest) {
+        Room room = findRoom(roomId);
+        roomValidator.validateHost(room, startGameRequest.userId());
+        roomValidator.validateRoomIsFull(room);
+        roomValidator.validateRoomWaiting(room);
+        //게임 시작
+        room.startGame();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void finishGame(Long roomId) {
+        Room room = roomRepository.findRoomWithCapacity(roomId).get();
+        room.finishGame();
+        userRoomService.deleteAllUserRooms(room.getId());
     }
 }
