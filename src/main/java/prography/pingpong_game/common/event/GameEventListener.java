@@ -1,38 +1,42 @@
 package prography.pingpong_game.common.event;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import prography.pingpong_game.room.service.RoomService;
-import prography.pingpong_game.room.service.UserRoomService;
+
+import java.time.Instant;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@EnableAsync
+@EnableScheduling
 public class GameEventListener {
 	private final RoomService roomService;
-	private final UserRoomService userRoomService;
-	private final EntityManager entityManager;
-
-	//TODO : 공부 하기
+	private final TaskScheduler taskScheduler;
+	private static final int GAME_DURATION_SECONDS = 60;
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void startGame(GameStartEvent gameStartEvent) {
-		try {
-			log.info("게임 종료");
-//			finishGame(gameStartEvent);
-		} catch (Exception e) {
-			log.error("게임 종료 처리 중 오류 발생", e);
-		}
+		log.info("게임 시작 : roomId = {}", gameStartEvent.roomId());
+		scheduleFinishGame(gameStartEvent.roomId());
 	}
 
-//	@Transactional(propagation = Propagation.REQUIRES_NEW)
-//	public void finishGame(GameStartEvent gameStartEvent) {
-//		Room updatedRoom = roomService.findRoomWithCapacity(gameStartEvent.roomId());
-//		updatedRoom.finishGame();
-//		userRoomService.deleteAllUserRooms(updatedRoom.getId());
-//		log.info("게임이 종료되었습니다");
-//	}
+	@Async
+	public void scheduleFinishGame(Long roomId) {
+		taskScheduler.schedule(
+				() -> finishGame(roomId),
+				Instant.now().plusSeconds(GAME_DURATION_SECONDS)
+		);
+	}
+	private void finishGame(Long roomId) {
+		log.info("게임 종료");
+		roomService.finishGame(roomId);
+	}
 }

@@ -8,6 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import prography.pingpong_game.common.event.GameEventListener;
+import prography.pingpong_game.common.event.GameStartEvent;
 import prography.pingpong_game.common.exception.ApiStatus;
 import prography.pingpong_game.room.dto.request.*;
 import prography.pingpong_game.room.dto.response.RoomDetailResponse;
@@ -139,6 +141,7 @@ public class RoomService {
         roomValidator.validateRoomWaiting(room);
         //게임 시작
         room.startGame();
+        eventPublisher.publishEvent(new GameStartEvent(roomId));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
