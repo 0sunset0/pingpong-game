@@ -22,7 +22,7 @@ public class RoomController {
         return ApiResponse.success();
     }
     @Operation(summary = "방 전체 조회 API", description = "방에 대한 전체 조회를 합니다.")
-    @GetMapping()
+    @GetMapping
     public ApiResponse findAllRooms(
             @RequestParam(defaultValue = "10") @Parameter(description = "페이지 크기") int size,
             @RequestParam(defaultValue = "0") @Parameter(description = "페이지 번호 (0부터 시작)") int page) {

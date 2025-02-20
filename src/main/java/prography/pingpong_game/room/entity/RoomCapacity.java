@@ -32,7 +32,7 @@ public class RoomCapacity {
 		return (redTeamCapacity < maxCapacity / 2) ? Team.RED : Team.BLUE;
 	}
 
-	void addUserToTeam(Team team) {
+	public void addUserToTeam(Team team) {
 		if (team == Team.RED) {
 			redTeamCapacity++;
 		} else {
@@ -59,5 +59,10 @@ public class RoomCapacity {
 		this.currentCapacity = 0;
 		this.redTeamCapacity = 0;
 		this.blueTeamCapacity = 0;
+	}
+
+	public boolean canSwitchTeam(Team currentTeam) {
+		int maxTeamCapacity = maxCapacity / 2;
+		return (currentTeam == Team.RED) ? (blueTeamCapacity < maxTeamCapacity) : (redTeamCapacity < maxTeamCapacity);
 	}
 }
