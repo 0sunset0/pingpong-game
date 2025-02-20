@@ -36,7 +36,7 @@ public class UserRoom {
         this.team = team;
     }
 
-    public void switchTeam() {
-        this.team = team.getOpposite();
+    public void changeTeam() {
+        this.team = (this.team == Team.RED) ? Team.BLUE : Team.RED;
     }
 }

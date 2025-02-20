@@ -75,9 +75,4 @@ public class Room extends BaseEntity {
     public boolean isExitNotAllowed() {
         return this.status == RoomStatus.PROGRESS || this.status == RoomStatus.FINISH;
     }
-
-    public void changeUserTeam(Team currentTeam, Team newTeam) {
-        this.roomCapacity.removeUserFromTeam(currentTeam);
-        this.roomCapacity.addUserToTeam(newTeam);
-    }
 }

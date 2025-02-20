@@ -4,13 +4,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import prography.pingpong_game.common.exception.ApiStatus;
 import prography.pingpong_game.room.entity.Room;
-import prography.pingpong_game.room.entity.Team;
 import prography.pingpong_game.room.exception.*;
+import prography.pingpong_game.room.repository.UserRoomRepository;
 
 
 @Service
 @RequiredArgsConstructor
 public class RoomValidator {
+	private final UserRoomRepository userRoomRepository;
+
+	void validateUserNotInAnyRoom(Long userId) {
+		boolean hasExistingRoom = userRoomRepository.existsRoomByUserId(userId);
+		if (hasExistingRoom) {
+			throw new UserAlreadyInRoomException(ApiStatus.BAD_REQUEST);
+		}
+	}
 
 	void validateCanExitRoom(Room room) {
 		if (room.isExitNotAllowed()) {
@@ -30,10 +38,10 @@ public class RoomValidator {
 		}
 	}
 
-	public void validateCanSwitchTeam(Room room, Team team) {
-		boolean canSwitchTeam = room.getRoomCapacity().canSwitchTeam(team);
-		if (!canSwitchTeam) {
-			throw new TeamSwitchNotAllowed(ApiStatus.BAD_REQUEST);
+	void validateUserInRoom(Long userId, Long roomId) {
+		boolean isExistUserRoom = userRoomRepository.findUserRoom(userId, roomId).isPresent();
+		if (!isExistUserRoom) {
+			throw new UserNotInRoomException(ApiStatus.BAD_REQUEST);
 		}
 	}
 }

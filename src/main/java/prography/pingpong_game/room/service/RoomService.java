@@ -8,13 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import prography.pingpong_game.common.exception.ApiStatus;
 import prography.pingpong_game.room.dto.request.AttendRequest;
 import prography.pingpong_game.room.dto.request.OutRoomRequest;
-import prography.pingpong_game.room.dto.request.TeamSwitchRequest;
 import prography.pingpong_game.room.dto.response.RoomDetailResponse;
 import prography.pingpong_game.room.dto.request.RoomCreateRequest;
 import prography.pingpong_game.room.dto.response.RoomPageResponse;
 import prography.pingpong_game.room.entity.*;
 import prography.pingpong_game.room.exception.RoomNotFoundException;
+import prography.pingpong_game.room.exception.UserNotInRoomException;
 import prography.pingpong_game.room.repository.RoomRepository;
+import prography.pingpong_game.room.repository.UserRoomRepository;
 import prography.pingpong_game.user.entity.User;
 import prography.pingpong_game.user.service.UserService;
 
@@ -23,15 +24,14 @@ import prography.pingpong_game.user.service.UserService;
 @RequiredArgsConstructor
 public class RoomService {
     private final RoomRepository roomRepository;
+    private final UserRoomRepository userRoomRepository;
     private final UserService userService;
     private final RoomValidator roomValidator;
-    private final UserRoomValidator userRoomValidator;
-    private final UserRoomService userRoomService;
     @Transactional
     public void createRoom(RoomCreateRequest roomCreateRequest) {
         Long userId = roomCreateRequest.userId();
         User user = userService.getActiveUser(userId);
-        userRoomValidator.validateUserNotInAnyRoom(userId);
+        roomValidator.validateUserNotInAnyRoom(userId);
         Long roomId = createNewRoom(roomCreateRequest, user);
         Room room = findRoom(roomId);
         addUserToRoom(room, user);
@@ -68,13 +68,15 @@ public class RoomService {
         User user = userService.getActiveUser(attendRequest.userId());
         roomValidator.validateRoomWaiting(room);
         roomValidator.validateRoomNotFull(room);
-        userRoomValidator.validateUserNotInAnyRoom(attendRequest.userId());
+        roomValidator.validateUserNotInAnyRoom(attendRequest.userId());
+
         addUserToRoom(room, user);
     }
 
     private void addUserToRoom(Room room, User user) {
         Team team = room.assignTeam();
-        UserRoom userRoom = userRoomService.saveUserRoom(room, user, team);
+        UserRoom userRoom = UserRoom.create(room, user, team);
+        userRoomRepository.save(userRoom);
         room.addUser(userRoom);
     }
 
@@ -82,39 +84,29 @@ public class RoomService {
     public void outRoom(Long roomId, OutRoomRequest outRoomRequest) {
         Long userId = outRoomRequest.userId();
         Room room = findRoom(roomId);
-        UserRoom userRoom = userRoomService.findUserRoom(roomId, userId);
+        UserRoom userRoom = findUserRoom(roomId, userId);
         roomValidator.validateCanExitRoom(room);
 
         if (room.isHost(userId)) {
-            handleHostExit(room);
+            handleHostExit(roomId, room);
         } else {
             handleUserExit(userRoom, room);
         }
     }
 
-    private void handleHostExit(Room room) {
-        userRoomService.deleteAllUserRooms(room.getId());
+    private void handleHostExit(Long roomId, Room room) {
+        userRoomRepository.deleteAllByRoomId(roomId);
         room.finish();
     }
 
     private void handleUserExit(UserRoom userRoom, Room room) {
-        userRoomService.deleteUser(userRoom);
+        userRoomRepository.delete(userRoom);
         room.removeUser(userRoom);
     }
 
-    @Transactional
-    public void switchTeam(Long roomId, TeamSwitchRequest teamSwitchRequest) {
-        Room room = findRoom(roomId);
-        UserRoom userRoom = userRoomService.findUserRoom(roomId, teamSwitchRequest.userId());
-        roomValidator.validateCanSwitchTeam(room, userRoom.getTeam());
-        roomValidator.validateRoomWaiting(room);
-        handleUserTeamSwitch(room, userRoom);
-    }
-
-    private void handleUserTeamSwitch(Room room, UserRoom userRoom) {
-        Team currentTeam = userRoom.getTeam();
-        Team newTeam = currentTeam.getOpposite();
-        room.changeUserTeam(currentTeam, newTeam);
-        userRoom.switchTeam();
+    private UserRoom findUserRoom(Long roomId, Long userId) {
+        UserRoom userRoom = userRoomRepository.findUserRoom(userId, roomId)
+                .orElseThrow(() -> new UserNotInRoomException(ApiStatus.BAD_REQUEST));
+        return userRoom;
     }
 }
