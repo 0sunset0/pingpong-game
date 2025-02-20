@@ -20,7 +20,18 @@ public class RoomValidator {
 
 	void validateRoomNotFull(Room room) {
 		if (room.isFull()) {
-			throw new RoomCapacityExceededException(ApiStatus.BAD_REQUEST);
+			throw new RoomIsFullException(ApiStatus.BAD_REQUEST);
+		}
+	}
+	void validateRoomIsFull(Room room) {
+		if (!room.isFull()) {
+			throw new RoomIsNotFullException(ApiStatus.BAD_REQUEST);
+		}
+	}
+
+	void validateHost(Room room, Long userId) {
+		if (!room.isHost(userId)) {
+			throw new OnlyHostCanStartGameException(ApiStatus.BAD_REQUEST);
 		}
 	}
 

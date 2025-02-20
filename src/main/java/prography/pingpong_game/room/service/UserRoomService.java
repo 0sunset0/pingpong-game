@@ -30,11 +30,10 @@ public class UserRoomService {
 		return userRoom;
 	}
 
-	@Transactional
 	public void deleteAllUserRooms(Long roomId) {
 		userRoomRepository.deleteAllByRoomId(roomId);
 	}
-	@Transactional
+
 	public void deleteUser(UserRoom userRoom) {
 		userRoomRepository.delete(userRoom);
 	}
