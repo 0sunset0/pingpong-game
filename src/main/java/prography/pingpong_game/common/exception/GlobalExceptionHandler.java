@@ -2,9 +2,10 @@ package prography.pingpong_game.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import prography.pingpong_game.common.ApiResponse;
+import prography.pingpong_game.common.dto.ApiResponse;
 
 @RestControllerAdvice
 @Slf4j
@@ -16,14 +17,18 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ApiResponse handleRuntimeException(RuntimeException e) {
+    public ResponseEntity<ApiResponse> handleRuntimeException(RuntimeException e) {
         log.warn("{}({}) - {}", e.getClass().getSimpleName(), HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        return ApiResponse.error(ApiStatus.SERVER_ERROR);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(ApiStatus.SERVER_ERROR));
     }
 
     @ExceptionHandler(Exception.class)
-    public ApiResponse handleException(Exception e) {
+    public ResponseEntity<ApiResponse> handleException(Exception e) {
         log.warn("{}({}) - {}", e.getClass().getSimpleName(), HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        return ApiResponse.error(ApiStatus.SERVER_ERROR);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(ApiStatus.SERVER_ERROR));
     }
 }

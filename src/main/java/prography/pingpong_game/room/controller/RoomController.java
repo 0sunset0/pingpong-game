@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import prography.pingpong_game.common.ApiResponse;
+import prography.pingpong_game.common.dto.ApiResponse;
 import prography.pingpong_game.room.dto.request.AttendRequest;
 import prography.pingpong_game.room.dto.request.OutRoomRequest;
 import prography.pingpong_game.room.dto.request.RoomCreateRequest;

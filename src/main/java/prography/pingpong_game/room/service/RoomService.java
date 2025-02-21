@@ -1,15 +1,13 @@
 package prography.pingpong_game.room.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import prography.pingpong_game.common.event.GameEventListener;
-import prography.pingpong_game.common.event.GameStartEvent;
+import prography.pingpong_game.room.event.GameStartEvent;
 import prography.pingpong_game.common.exception.ApiStatus;
 import prography.pingpong_game.room.dto.request.*;
 import prography.pingpong_game.room.dto.response.RoomDetailResponse;
@@ -20,13 +18,9 @@ import prography.pingpong_game.room.repository.RoomRepository;
 import prography.pingpong_game.user.entity.User;
 import prography.pingpong_game.user.service.UserService;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class RoomService {
     private final RoomRepository roomRepository;
     private final UserService userService;
@@ -34,7 +28,6 @@ public class RoomService {
     private final UserRoomValidator userRoomValidator;
     private final UserRoomService userRoomService;
     private final ApplicationEventPublisher eventPublisher;
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1); // ✅ 스레드 풀 관리
     @Transactional
     public void createRoom(RoomCreateRequest roomCreateRequest) {
         Long userId = roomCreateRequest.userId();
@@ -59,13 +52,6 @@ public class RoomService {
 
     private Room findRoom(Long roomId) {
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new RoomNotFoundException(ApiStatus.BAD_REQUEST));
-        return room;
-    }
-
-    @Transactional(readOnly = true)
-    public Room findRoomWithCapacity(Long roomId) {
-        Room room = roomRepository.findRoomWithCapacity(roomId)
                 .orElseThrow(() -> new RoomNotFoundException(ApiStatus.BAD_REQUEST));
         return room;
     }
@@ -139,14 +125,13 @@ public class RoomService {
         roomValidator.validateHost(room, startGameRequest.userId());
         roomValidator.validateRoomIsFull(room);
         roomValidator.validateRoomWaiting(room);
-        //게임 시작
         room.startGame();
         eventPublisher.publishEvent(new GameStartEvent(roomId));
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void finishGame(Long roomId) {
-        Room room = roomRepository.findRoomWithCapacity(roomId).get();
+        Room room = findRoom(roomId);
         room.finishGame();
         userRoomService.deleteAllUserRooms(room.getId());
     }
