@@ -27,6 +27,7 @@ import prography.pingpong_game.user.entity.UserStatus;
 import prography.pingpong_game.user.repository.UserRepository;
 import reactor.core.publisher.Mono;
 
+@DisplayName("초기화 서비스 테스트")
 @ExtendWith(MockitoExtension.class)
 class InitializationServiceTest {
 
