@@ -50,15 +50,15 @@ class InitializationServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		userData1 = new FakerUserData(1L, "User1", "user1@example.com");
-		userData2 = new FakerUserData(2L, "User2", "user2@example.com");
+		userData1 = new FakerUserData(1L, "User1", "user1@naver.com");
+		userData2 = new FakerUserData(2L, "User2", "user2@naver.com");
 
 		fakerApiResponse = new FakerApiResponse(Arrays.asList(userData1, userData2));
 	}
 
 	@Test
 	@DisplayName("데이터 초기화 - API 호출 후 유저 저장")
-	void initialize_ShouldFetchUsersAndSave() {
+	void initialize_FetchesAndSavesUsers() {
 		// Given
 		when(fakerApiClient.fetchUsers(anyInt(), anyInt(), any(Locale.class)))
 			.thenReturn(Mono.just(fakerApiResponse));
@@ -76,10 +76,10 @@ class InitializationServiceTest {
 
 	@Test
 	@DisplayName("데이터 초기화 - API 응답이 null일 경우 저장하지 않음")
-	void initialize_ShouldNotSave_WhenApiResponseIsNull() {
+	void initialize_DoesNotSave_WhenNull() {
 		// Given
 		when(fakerApiClient.fetchUsers(anyInt(), anyInt(), any(Locale.class)))
-			.thenReturn(Mono.just(null));
+			.thenReturn(Mono.empty());
 
 		// When
 		initializationService.initialize(1, 2);
@@ -87,10 +87,10 @@ class InitializationServiceTest {
 		// Then
 		verify(userRepository, never()).saveAll(anyList());
 	}
-	
+
 	@Test
 	@DisplayName("유저 변환 테스트")
-	void convertToUser_ShouldConvertCorrectly() {
+	void convertToUser() {
 		// When
 		User user = initializationService.convertToUser(userData1);
 
@@ -102,7 +102,7 @@ class InitializationServiceTest {
 
 	@Test
 	@DisplayName("FakerId에 따른 유저 상태 결정 테스트 - ACTIVE 상태")
-	void determineUserStatus_ShouldReturnActive_WhenFakerIdIsWithinActiveRange() {
+	void determineUserStatus_Active() {
 		// When
 		UserStatus status = initializationService.determineUserStatus(30L);
 
@@ -112,7 +112,7 @@ class InitializationServiceTest {
 
 	@Test
 	@DisplayName("FakerId에 따른 유저 상태 결정 테스트 - WAIT 상태")
-	void determineUserStatus_ShouldReturnWait_WhenFakerIdIsWithinWaitRange() {
+	void determineUserStatus_Wait() {
 		// When
 		UserStatus status = initializationService.determineUserStatus(31L);
 
@@ -122,7 +122,7 @@ class InitializationServiceTest {
 
 	@Test
 	@DisplayName("FakerId에 따른 유저 상태 결정 - INACTIVE 상태")
-	void determineUserStatus_ShouldReturnInactive_WhenFakerIdIsAboveWaitRange() {
+	void determineUserStatus_Inactive() {
 		// When
 		UserStatus status = initializationService.determineUserStatus(70L);
 
