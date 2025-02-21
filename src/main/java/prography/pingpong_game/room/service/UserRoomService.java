@@ -1,8 +1,9 @@
 package prography.pingpong_game.room.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import prography.pingpong_game.common.exception.ApiStatus;
 import prography.pingpong_game.room.entity.Room;
 import prography.pingpong_game.room.entity.Team;
@@ -19,15 +20,14 @@ public class UserRoomService {
 	@Transactional(readOnly = true)
 	public UserRoom findUserRoom(Long roomId, Long userId) {
 		UserRoom userRoom = userRoomRepository.findUserRoom(userId, roomId)
-				.orElseThrow(() -> new UserNotInRoomException(ApiStatus.BAD_REQUEST));
+			.orElseThrow(() -> new UserNotInRoomException(ApiStatus.BAD_REQUEST));
 		return userRoom;
 	}
 
 	@Transactional
-	public UserRoom saveUserRoom(Room room, User user, Team team) {
+	public void saveUserRoom(Room room, User user, Team team) {
 		UserRoom userRoom = UserRoom.create(room, user, team);
 		userRoomRepository.save(userRoom);
-		return userRoom;
 	}
 
 	public void deleteAllUserRooms(Long roomId) {
