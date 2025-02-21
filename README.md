@@ -15,9 +15,8 @@
 
 ## ✨ 주요 기능
 
-- **게임 종료 이벤트 비동기 처리** (`TaskScheduler`, `ApplicationEventPublisher`, `@EventListener`)
-    - `ApplicationEventPublisher`를 사용해 **게임 종료 이벤트를 등록**하고,  
-      `@EventListener`와 `TaskScheduler`를 활용하여 **비동기 실행**하여 성능 최적화
+- **게임 종료 이벤트 비동기 처리** 
+    - `ApplicationEventPublisher`를 사용해 **게임 종료 이벤트를 등록**하고, `@EventListener`와 `TaskScheduler`를 활용하여 이벤트 비동기 실행
 - **`QueryDSL`을 활용한 페이징 API 구현**
 - **커스텀 예외 정의 및 전역 예외 처리**
 - **Swagger API 문서화 (`SpringDoc OpenAPI 3`)**
