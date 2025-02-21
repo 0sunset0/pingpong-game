@@ -1,4 +1,4 @@
-package prography.pingpong_game.config;
+package prography.pingpong_game.common.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

@@ -41,7 +41,7 @@ public class RoomValidator {
 		}
 	}
 
-	public void validateCanSwitchTeam(Room room, Team team) {
+	void validateCanSwitchTeam(Room room, Team team) {
 		boolean canSwitchTeam = room.getRoomCapacity().canSwitchTeam(team);
 		if (!canSwitchTeam) {
 			throw new TeamSwitchNotAllowed(ApiStatus.BAD_REQUEST);

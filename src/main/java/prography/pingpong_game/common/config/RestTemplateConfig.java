@@ -1,4 +1,4 @@
-package prography.pingpong_game.config;
+package prography.pingpong_game.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

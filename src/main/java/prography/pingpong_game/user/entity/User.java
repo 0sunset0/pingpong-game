@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import prography.pingpong_game.BaseEntity;
+import prography.pingpong_game.common.entity.BaseEntity;
 
 
 @Getter

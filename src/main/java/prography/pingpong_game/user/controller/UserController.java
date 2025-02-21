@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import prography.pingpong_game.common.ApiResponse;
+import prography.pingpong_game.common.dto.ApiResponse;
 import prography.pingpong_game.user.dto.response.UserPageResponse;
 import prography.pingpong_game.user.service.UserService;
 

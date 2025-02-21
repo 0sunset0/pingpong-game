@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import prography.pingpong_game.BaseEntity;
+import prography.pingpong_game.common.entity.BaseEntity;
 import prography.pingpong_game.user.entity.User;
 
 @Getter
