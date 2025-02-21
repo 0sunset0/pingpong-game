@@ -66,7 +66,7 @@ class RoomServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		testUser = User.create(1L, "Test User", "test@example.com", UserStatus.ACTIVE);
+		testUser = User.create(1L, "Test User", "test@naver.com", UserStatus.ACTIVE);
 		testRoom = Room.create("Test Room", testUser, RoomType.SINGLE);
 		ReflectionTestUtils.setField(testUser, "id", 1L);
 		ReflectionTestUtils.setField(testRoom, "id", 1L);
@@ -135,19 +135,6 @@ class RoomServiceTest {
 		verify(roomRepository, times(1)).save(any(Room.class));
 	}
 
-	// @Test
-	// @DisplayName("방 생성 - 유저가 이미 참여하고 있는 방이 있다면 UserAlreadyInRoomException 발생")
-	// void createRoom_WhenUserAlreadyInRoom_ThrowsException() {
-	// 	// Given
-	// 	RoomCreateRequest request = new RoomCreateRequest(1L, "SINGLE", "room");
-	//
-	// 	doThrow(new UserAlreadyInRoomException(ApiStatus.BAD_REQUEST))
-	// 		.when(userRoomValidator).validateUserNotInAnyRoom(anyLong());
-	//
-	// 	// When & Then
-	// 	assertThrows(UserAlreadyInRoomException.class, () -> roomService.createRoom(request));
-	// }
-
 	@Test
 	@DisplayName("방 입장 - 정상적으로 입장한다")
 	void joinRoom_Success() {
@@ -182,7 +169,7 @@ class RoomServiceTest {
 	@DisplayName("방 나가기 - 호스트가 아니라면 방이 종료되지 않음")
 	void leaveRoom_WhenNotHost_RoomRemains() {
 		// Given
-		User anotherUser = User.create(2L, "Another User", "another@example.com", UserStatus.ACTIVE);
+		User anotherUser = User.create(2L, "Another User", "another@naver.com", UserStatus.ACTIVE);
 		ReflectionTestUtils.setField(anotherUser, "id", 2L);
 
 		// When

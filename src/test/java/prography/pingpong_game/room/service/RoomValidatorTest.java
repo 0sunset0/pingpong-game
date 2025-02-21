@@ -20,6 +20,7 @@ import prography.pingpong_game.room.exception.RoomNotExitException;
 import prography.pingpong_game.room.exception.RoomNotWaitingException;
 import prography.pingpong_game.room.exception.TeamSwitchNotAllowed;
 
+@DisplayName("방 검증 테스트")
 @ExtendWith(MockitoExtension.class)
 class RoomValidatorTest {
 	@InjectMocks
