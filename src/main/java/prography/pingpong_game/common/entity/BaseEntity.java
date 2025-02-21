@@ -1,4 +1,4 @@
-package prography.pingpong_game;
+package prography.pingpong_game.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

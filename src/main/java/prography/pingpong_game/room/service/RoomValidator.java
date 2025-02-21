@@ -1,12 +1,17 @@
 package prography.pingpong_game.room.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
 import prography.pingpong_game.common.exception.ApiStatus;
 import prography.pingpong_game.room.entity.Room;
 import prography.pingpong_game.room.entity.Team;
-import prography.pingpong_game.room.exception.*;
-
+import prography.pingpong_game.room.exception.OnlyHostCanStartGameException;
+import prography.pingpong_game.room.exception.RoomIsFullException;
+import prography.pingpong_game.room.exception.RoomIsNotFullException;
+import prography.pingpong_game.room.exception.RoomNotExitException;
+import prography.pingpong_game.room.exception.RoomNotWaitingException;
+import prography.pingpong_game.room.exception.TeamSwitchNotAllowed;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +28,7 @@ public class RoomValidator {
 			throw new RoomIsFullException(ApiStatus.BAD_REQUEST);
 		}
 	}
+
 	void validateRoomIsFull(Room room) {
 		if (!room.isFull()) {
 			throw new RoomIsNotFullException(ApiStatus.BAD_REQUEST);
@@ -41,8 +47,8 @@ public class RoomValidator {
 		}
 	}
 
-	public void validateCanSwitchTeam(Room room, Team team) {
-		boolean canSwitchTeam = room.getRoomCapacity().canSwitchTeam(team);
+	void validateCanSwitchTeam(Room room, Team team) {
+		boolean canSwitchTeam = room.canSwitchTeam(team);
 		if (!canSwitchTeam) {
 			throw new TeamSwitchNotAllowed(ApiStatus.BAD_REQUEST);
 		}
