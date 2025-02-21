@@ -43,7 +43,8 @@
 
 ## 🗄 ERD
 
-![img.png](img.png)
+![image](https://github.com/user-attachments/assets/76dcb631-493b-40e3-8b85-3922b2e69af8)
+
 
 ---
 
